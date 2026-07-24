@@ -4,7 +4,7 @@ const paymentSchema = new mongoose.Schema({
     member: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true // Reference to the User who made the payment
+        required: true
     },
     amount: {
         type: Number,
@@ -12,29 +12,31 @@ const paymentSchema = new mongoose.Schema({
     },
     paymentType: {
         type: String,
-        enum: ['MonthlyFee', 'Fine', 'Donation', 'Other'],
         required: true
     },
     monthYear: {
-        type: String, // e.g. "2026-07" (for tracking monthly subscriptions)
-        required: true
+        type: String
+    },
+    paymentMethod: {
+        type: String,
+        default: 'Cash'
+    },
+    remarks: {
+        type: String
     },
     description: {
-        type: String // Optional note (e.g. "Absent fine for June meeting")
+        type: String
     },
     receiptNo: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     receiptUrl: {
         type: String, 
-        default: null // Stores the uploaded receipt file path/URL (from Multer)
+        default: null
     },
     recordedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true // Treasurer or Admin who accepted/verified the payment
+        ref: 'User'
     }
 }, {
     timestamps: true

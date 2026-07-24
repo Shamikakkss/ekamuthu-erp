@@ -47,14 +47,24 @@ const Payments = () => {
     // Fetch Payments and Members
     const fetchData = async () => {
         try {
-            const [paymentsRes, membersRes] = await Promise.all([
+            const [paymentsRes, membersRes] = await Promise.allSettled([
                 API.get('/payments'),
                 API.get('/members')
             ]);
-            setPayments(paymentsRes.data);
-            setMembers(membersRes.data);
+
+            if (paymentsRes.status === 'fulfilled') {
+                setPayments(paymentsRes.value.data || []);
+            } else {
+                console.error('Error fetching payments:', paymentsRes.reason);
+            }
+
+            if (membersRes.status === 'fulfilled') {
+                setMembers(membersRes.value.data || []);
+            } else {
+                console.error('Error fetching members:', membersRes.reason);
+            }
         } catch (err) {
-            console.error('Error fetching payments data:', err);
+            console.error('Error fetching data:', err);
         } finally {
             setLoading(false);
         }

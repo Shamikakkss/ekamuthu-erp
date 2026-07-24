@@ -33,7 +33,22 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // Maximum 5MB Limit
 });
 
-// 3. POST Route for Recording Payment with Receipt Attachment
+// 3. GET Route for Fetching All Payments
+router.get('/', async (req, res) => {
+    try {
+        const payments = await Payment.find()
+            .populate('member', 'fullName membershipNo nic')
+            .populate('recordedBy', 'fullName role')
+            .sort({ createdAt: -1 });
+
+        res.json(payments);
+    } catch (err) {
+        console.error('Error fetching payments:', err);
+        res.status(500).json({ message: err.message || 'Server error fetching payments' });
+    }
+});
+
+// 4. POST Route for Recording Payment with Receipt Attachment
 router.post('/', upload.single('receipt'), async (req, res) => {
     try {
         const { memberId, amount, paymentType, monthYear, paymentMethod, remarks } = req.body;
@@ -45,6 +60,8 @@ router.post('/', upload.single('receipt'), async (req, res) => {
             receiptUrl = `${req.protocol}://${req.get('host')}/uploads/receipts/${req.file.filename}`;
         }
 
+        const receiptNo = `REC-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
         const newPayment = new Payment({
             member: memberId,
             amount,
@@ -52,6 +69,7 @@ router.post('/', upload.single('receipt'), async (req, res) => {
             monthYear,
             paymentMethod,
             remarks,
+            receiptNo,
             receiptUrl // Receipts File URL එක DB එකට Save වෙනවා
         });
 
