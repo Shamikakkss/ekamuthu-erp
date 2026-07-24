@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LogOut, Users, LayoutDashboard, DollarSign } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { LogOut, Users, LayoutDashboard, DollarSign, FileText } from 'lucide-react';
 import Members from './Members';
-import Payments from './Payments'; // Import Payments View Component
+import Payments from './Payments';
+import Claims from './Claims';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const user = JSON.parse(localStorage.getItem('userInfo') || '{}');
 
-    // Tab state: 'overview', 'members', or 'payments'
-    const [activeTab, setActiveTab] = useState('overview');
+    // Tab state based on URL path
+    const getTabFromPath = () => {
+        const path = location.pathname;
+        if (path.includes('/members')) return 'members';
+        if (path.includes('/payments')) return 'payments';
+        if (path.includes('/claims')) return 'claims';
+        return 'overview';
+    };
+
+    const [activeTab, setActiveTab] = useState(getTabFromPath());
+
+    useEffect(() => {
+        setActiveTab(getTabFromPath());
+    }, [location.pathname]);
+
+    const handleTabChange = (tabName) => {
+        setActiveTab(tabName);
+        if (tabName === 'overview') {
+            navigate('/dashboard');
+        } else {
+            navigate(`/dashboard/${tabName}`);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -28,7 +51,7 @@ const Dashboard = () => {
 
                     <nav className="p-4 space-y-2">
                         <button
-                            onClick={() => setActiveTab('overview')}
+                            onClick={() => handleTabChange('overview')}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                                 activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
                             }`}
@@ -37,7 +60,7 @@ const Dashboard = () => {
                         </button>
 
                         <button
-                            onClick={() => setActiveTab('members')}
+                            onClick={() => handleTabChange('members')}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                                 activeTab === 'members' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
                             }`}
@@ -46,20 +69,29 @@ const Dashboard = () => {
                         </button>
 
                         <button
-                            onClick={() => setActiveTab('payments')}
+                            onClick={() => handleTabChange('payments')}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                                 activeTab === 'payments' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
                             }`}
                         >
                             <DollarSign className="w-5 h-5" /> Payments
                         </button>
+
+                        <button
+                            onClick={() => handleTabChange('claims')}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                                activeTab === 'claims' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                            }`}
+                        >
+                            <FileText className="w-5 h-5" /> Benefit Claims
+                        </button>
                     </nav>
                 </div>
 
                 <div className="p-4 border-t border-slate-700">
                     <div className="mb-3 px-2">
-                        <p className="text-sm font-medium text-white truncate">{user.fullName}</p>
-                        <p className="text-xs text-emerald-400 font-semibold">{user.role}</p>
+                        <p className="text-sm font-medium text-white truncate">{user.fullName || 'User'}</p>
+                        <p className="text-xs text-emerald-400 font-semibold">{user.role || 'Member'}</p>
                     </div>
                     <button
                         onClick={handleLogout}
@@ -71,14 +103,14 @@ const Dashboard = () => {
             </aside>
 
             {/* Main Area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-y-auto">
                 {activeTab === 'overview' && (
                     <div className="p-8 max-w-7xl">
-                        <h2 className="text-2xl font-bold text-white mb-2">Welcome back, {user.fullName}! 👋</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">Welcome back, {user.fullName || 'User'}! 👋</h2>
                         <p className="text-slate-400 text-sm mb-8">System Overview & Quick Actions.</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div onClick={() => setActiveTab('members')} className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                            <div onClick={() => handleTabChange('members')} className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-colors">
                                 <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg">
                                     <Users className="w-6 h-6" />
                                 </div>
@@ -88,7 +120,7 @@ const Dashboard = () => {
                                 </div>
                             </div>
 
-                            <div onClick={() => setActiveTab('payments')} className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                            <div onClick={() => handleTabChange('payments')} className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-colors">
                                 <div className="p-3 bg-blue-500/10 text-blue-400 rounded-lg">
                                     <DollarSign className="w-6 h-6" />
                                 </div>
@@ -97,12 +129,24 @@ const Dashboard = () => {
                                     <h3 className="text-xl font-bold text-white mt-1">Subscriptions & Fines</h3>
                                 </div>
                             </div>
+
+                            <div onClick={() => handleTabChange('claims')} className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-colors">
+                                <div className="p-3 bg-amber-500/10 text-amber-400 rounded-lg">
+                                    <FileText className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="text-slate-400 text-xs uppercase font-semibold">Death Claims</p>
+                                    <h3 className="text-xl font-bold text-white mt-1">Process Claims</h3>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
 
+                {/* Sub Routes Content Render Area */}
                 {activeTab === 'members' && <Members />}
                 {activeTab === 'payments' && <Payments />}
+                {activeTab === 'claims' && <Claims />}
             </div>
         </div>
     );
