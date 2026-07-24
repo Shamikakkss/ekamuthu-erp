@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
-import { DollarSign, PlusCircle, Search, AlertCircle, CheckCircle, CreditCard, Calendar, AlertTriangle, Check, Paperclip, Eye, FileText, X } from 'lucide-react';
+import { 
+    DollarSign, PlusCircle, Search, AlertCircle, CheckCircle, 
+    CreditCard, Calendar, AlertTriangle, Check, Paperclip, Eye, 
+    FileText, X, Download, Printer 
+} from 'lucide-react';
+import { generateReceiptPDF, generateFinancialReportPDF } from '../utils/generatePDF';
 
 const Payments = () => {
     const currentYear = new Date().getFullYear(); // 2026
@@ -77,7 +82,7 @@ const Payments = () => {
     // Get list of months already paid by the selected member
     const getMemberPaidMonths = (memberId) => {
         if (!memberId) return [];
-        return payments
+        return (Array.isArray(payments) ? payments : [])
             .filter(p => (p.member?._id === memberId || p.member === memberId) && 
                         (p.paymentType === 'Monthly Subscription' || p.type === 'Monthly Subscription') && 
                         p.monthYear)
@@ -223,9 +228,10 @@ const Payments = () => {
         }
     };
 
-    const filteredPayments = payments.filter(p => 
-        p.member?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.member?.membershipNo?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredPayments = (Array.isArray(payments) ? payments : []).filter(p => 
+        (p.member?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.member?.membershipNo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.receiptNo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -238,12 +244,25 @@ const Payments = () => {
                     </h1>
                     <p className="text-slate-400 text-sm mt-1">Record and track member subscriptions and receipts.</p>
                 </div>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-lg shadow-emerald-900/20"
-                >
-                    <PlusCircle className="w-5 h-5" /> Record Payment
-                </button>
+                
+                {/* Header Actions Area */}
+                <div className="flex items-center gap-3">
+                    {/* Export Full Financial Report PDF Button */}
+                    <button
+                        onClick={() => generateFinancialReportPDF(filteredPayments, 'Payments & Fines Report')}
+                        className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors border border-slate-600 shadow-md"
+                    >
+                        <Printer className="w-5 h-5" /> Export PDF Report
+                    </button>
+
+                    {/* Record Payment Button */}
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-lg shadow-emerald-900/20"
+                    >
+                        <PlusCircle className="w-5 h-5" /> Record Payment
+                    </button>
+                </div>
             </div>
 
             {/* Search */}
@@ -275,6 +294,7 @@ const Payments = () => {
                                     <th className="px-6 py-4">Method</th>
                                     <th className="px-6 py-4 text-center">Receipt</th>
                                     <th className="px-6 py-4 text-right">Amount (LKR)</th>
+                                    <th className="px-6 py-4 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-700/50">
@@ -300,7 +320,7 @@ const Payments = () => {
                                             <td className="px-6 py-4 text-xs font-medium text-slate-300">
                                                 {p.paymentMethod || 'Cash'}
                                             </td>
-                                            {/* Receipt Preview Column */}
+                                            {/* Receipt Attachment View Column */}
                                             <td className="px-6 py-4 text-center">
                                                 {p.receiptUrl ? (
                                                     <button
@@ -316,11 +336,22 @@ const Payments = () => {
                                             <td className="px-6 py-4 text-right font-bold text-white font-mono">
                                                 Rs. {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                             </td>
+
+                                            {/* Table Actions Column - Download Single Receipt PDF */}
+                                            <td className="px-6 py-4 text-center">
+                                                <button
+                                                    onClick={() => generateReceiptPDF(p)}
+                                                    title="Download Payment Receipt PDF"
+                                                    className="p-1.5 bg-slate-700 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-600"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="8" className="px-6 py-8 text-center text-slate-500">
+                                        <td colSpan="9" className="px-6 py-8 text-center text-slate-500">
                                             No payment records found.
                                         </td>
                                     </tr>
@@ -473,7 +504,7 @@ const Payments = () => {
                                 </div>
                             </div>
 
-                            {/* Receipt File Upload Field (Appears only for Bank Transfer or Optional) */}
+                            {/* Receipt File Upload Field */}
                             {formData.paymentMethod === 'Bank Transfer' && (
                                 <div className="bg-slate-900 p-3 rounded-lg border border-slate-700">
                                     <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">

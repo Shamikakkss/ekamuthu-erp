@@ -25,12 +25,16 @@ const Claims = () => {
     // Fetch Claims & Members
     const fetchData = async () => {
         try {
-            const [claimsRes, membersRes] = await Promise.all([
+            const [claimsRes, membersRes] = await Promise.allSettled([
                 API.get('/claims'),
                 API.get('/members')
             ]);
-            setClaims(claimsRes.data);
-            setMembers(membersRes.data);
+            if (claimsRes.status === 'fulfilled') {
+                setClaims(Array.isArray(claimsRes.value.data) ? claimsRes.value.data : []);
+            }
+            if (membersRes.status === 'fulfilled') {
+                setMembers(Array.isArray(membersRes.value.data) ? membersRes.value.data : []);
+            }
         } catch (err) {
             console.error('Error fetching claims data:', err);
         } finally {
@@ -93,11 +97,11 @@ const Claims = () => {
     };
 
     // Filter Claims
-    const filteredClaims = claims.filter(c => 
-        c.deceasedName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.member?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.member?.membershipNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.deathCertificateNo?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredClaims = (Array.isArray(claims) ? claims : []).filter(c => 
+        (c.deceasedName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.member?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.member?.membershipNo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.deathCertificateNo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
