@@ -32,9 +32,10 @@ const Members = () => {
     const fetchMembers = async () => {
         try {
             const { data } = await API.get('/members');
-            setMembers(data); // Save retrieved data into members state
+            setMembers(Array.isArray(data) ? data : []); // Save retrieved data into members state
         } catch (err) {
             console.error('Error fetching members:', err);
+            setMembers([]);
         } finally {
             setLoading(false); // Stop loading indicator regardless of success or failure
         }
@@ -64,10 +65,10 @@ const Members = () => {
     };
 
     // Real-time filtering logic based on member name, NIC, or membership number
-    const filteredMembers = members.filter(m => 
-        m.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.nic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.membershipNo.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredMembers = (Array.isArray(members) ? members : []).filter(m => 
+        (m.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (m.nic || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (m.membershipNo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // -----------------------------------------------------------------

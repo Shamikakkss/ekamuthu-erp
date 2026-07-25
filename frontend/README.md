@@ -1,16 +1,49 @@
-# React + Vite
+# ⚛️ EkamuthuERP - Frontend Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The frontend user interface for **EkamuthuERP**, a community mutual aid society management system built with React, Vite, Tailwind CSS, and Lucide Icons.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Getting Started
 
-## React Compiler
+### Prerequisites
+- Node.js (v18 or higher)
+- Backend API running on `http://localhost:5000`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation & Execution
 
-## Expanding the Oxlint configuration
+```bash
+# Navigate to frontend directory
+cd frontend
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+# Install dependencies
+npm install
+
+# Start Vite development server
+npm run dev
+```
+
+The application will run at `http://localhost:5173`.
+
+---
+
+## 🛠️ Key Libraries & Modules
+
+- **React 19 & Vite**: Ultra-fast component framework and build tool.
+- **Tailwind CSS**: Modern utility-first CSS styling.
+- **Lucide React**: Icon library for intuitive UI controls.
+- **Axios**: HTTP client with custom JWT header injection ([api.js](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/api.js)).
+- **jsPDF & jsPDF-AutoTable**: Client-side PDF generation for receipts and financial reports ([generatePDF.js](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/utils/generatePDF.js)).
+
+---
+
+## 📱 Page Modules
+
+- 🔐 **[Login.jsx](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/pages/Login.jsx)**: Glassmorphism sign-in form.
+- 📊 **[Dashboard.jsx](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/pages/Dashboard.jsx)**: Main layout with navigation sidebar and statistics overview.
+- 👥 **[Members.jsx](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/pages/Members.jsx)**: Member directory, real-time search, and registration modal.
+- 💳 **[Payments.jsx](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/pages/Payments.jsx)**: Payment records, multi-month picker, fine calculator, receipt viewer & PDF download.
+- ⚖️ **[Claims.jsx](file:///d:/HNDIT/test%20projects/EkamuthuERP/ekamuthu-erp/frontend/src/pages/Claims.jsx)**: Death benefit claim requests and administrative status review.
+
+---
+*EkamuthuERP Frontend Documentation*

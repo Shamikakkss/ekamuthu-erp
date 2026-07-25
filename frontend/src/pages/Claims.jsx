@@ -25,12 +25,16 @@ const Claims = () => {
     // Fetch Claims & Members
     const fetchData = async () => {
         try {
-            const [claimsRes, membersRes] = await Promise.all([
+            const [claimsRes, membersRes] = await Promise.allSettled([
                 API.get('/claims'),
                 API.get('/members')
             ]);
-            setClaims(claimsRes.data);
-            setMembers(membersRes.data);
+            if (claimsRes.status === 'fulfilled') {
+                setClaims(Array.isArray(claimsRes.value.data) ? claimsRes.value.data : []);
+            }
+            if (membersRes.status === 'fulfilled') {
+                setMembers(Array.isArray(membersRes.value.data) ? membersRes.value.data : []);
+            }
         } catch (err) {
             console.error('Error fetching claims data:', err);
         } finally {
@@ -93,11 +97,11 @@ const Claims = () => {
     };
 
     // Filter Claims
-    const filteredClaims = claims.filter(c => 
-        c.deceasedName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.member?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.member?.membershipNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.deathCertificateNo?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredClaims = (Array.isArray(claims) ? claims : []).filter(c => 
+        (c.deceasedName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.member?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.member?.membershipNo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.deathCertificateNo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -272,7 +276,7 @@ const Claims = () => {
 
                             {/* Deceased Name */}
                             <div>
-                                <label className="block text-xs font-medium text-slate-300 mb-1">Deceased Person's Full Name (මියගිය අයගේ නම)</label>
+                                <label className="block text-xs font-medium text-slate-300 mb-1">Deceased Person's Full Name</label>
                                 <input
                                     type="text" required
                                     placeholder="Enter full name of deceased"
@@ -291,10 +295,10 @@ const Claims = () => {
                                         onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
                                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
                                     >
-                                        <option value="Self">Self (සාමාජිකයා)</option>
-                                        <option value="Spouse">Spouse (ස්වාමියා/බිරිඳ)</option>
-                                        <option value="Child">Child (දරුවා)</option>
-                                        <option value="Parent">Parent (මව්/පිය)</option>
+                                        <option value="Self">Self</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Child">Child</option>
+                                        <option value="Parent">Parent</option>
                                     </select>
                                 </div>
                                 <div>

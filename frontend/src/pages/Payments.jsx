@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
-import { DollarSign, PlusCircle, Search, AlertCircle, CheckCircle, CreditCard, Calendar, AlertTriangle, Check, Paperclip, Eye, FileText, X } from 'lucide-react';
+import {
+    DollarSign, PlusCircle, Search, AlertCircle, CheckCircle,
+    CreditCard, Calendar, AlertTriangle, Check, Paperclip, Eye,
+    FileText, X, Download, Printer
+} from 'lucide-react';
+import { generateReceiptPDF, generateFinancialReportPDF } from '../utils/generatePDF';
 
 const Payments = () => {
     const currentYear = new Date().getFullYear(); // 2026
@@ -77,10 +82,10 @@ const Payments = () => {
     // Get list of months already paid by the selected member
     const getMemberPaidMonths = (memberId) => {
         if (!memberId) return [];
-        return payments
-            .filter(p => (p.member?._id === memberId || p.member === memberId) && 
-                        (p.paymentType === 'Monthly Subscription' || p.type === 'Monthly Subscription') && 
-                        p.monthYear)
+        return (Array.isArray(payments) ? payments : [])
+            .filter(p => (p.member?._id === memberId || p.member === memberId) &&
+                (p.paymentType === 'Monthly Subscription' || p.type === 'Monthly Subscription') &&
+                p.monthYear)
             .map(p => p.monthYear);
     };
 
@@ -116,8 +121,8 @@ const Payments = () => {
     };
 
     // Late Months & Amounts Calculation
-    const lateMonthsCount = formData.paymentType === 'Monthly Subscription' 
-        ? formData.selectedMonths.filter(m => m < currentMonthStr).length 
+    const lateMonthsCount = formData.paymentType === 'Monthly Subscription'
+        ? formData.selectedMonths.filter(m => m < currentMonthStr).length
         : 0;
 
     const subTotal = (Number(formData.amountPerMonth) || 0) * formData.selectedMonths.length;
@@ -203,7 +208,7 @@ const Payments = () => {
             await Promise.all(paymentPromises);
 
             setFormSuccess(`Payment recorded successfully!`);
-            
+
             // Reset Form
             setFormData({
                 memberId: '',
@@ -223,10 +228,25 @@ const Payments = () => {
         }
     };
 
-    const filteredPayments = payments.filter(p => 
-        p.member?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.member?.membershipNo?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredPayments = (Array.isArray(payments) ? payments : []).filter(p =>
+        (p.member?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.member?.membershipNo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.receiptNo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Status badge helper for payment approval states
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 'Pending':
+                return <span className="bg-yellow-100 text-yellow-800 text-xs px-2.5 py-1 rounded-full font-semibold">⏳ Pending Approval</span>;
+            case 'Approved':
+                return <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">✅ Approved</span>;
+            case 'Rejected':
+                return <span className="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">❌ Rejected</span>;
+            default:
+                return <span className="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full">Approved</span>;
+        }
+    };
 
     return (
         <div className="p-8">
@@ -238,12 +258,25 @@ const Payments = () => {
                     </h1>
                     <p className="text-slate-400 text-sm mt-1">Record and track member subscriptions and receipts.</p>
                 </div>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-lg shadow-emerald-900/20"
-                >
-                    <PlusCircle className="w-5 h-5" /> Record Payment
-                </button>
+
+                {/* Header Actions Area */}
+                <div className="flex items-center gap-3">
+                    {/* Export Full Financial Report PDF Button */}
+                    <button
+                        onClick={() => generateFinancialReportPDF(filteredPayments, 'Payments & Fines Report')}
+                        className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors border border-slate-600 shadow-md"
+                    >
+                        <Printer className="w-5 h-5" /> Export PDF Report
+                    </button>
+
+                    {/* Record Payment Button */}
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-lg shadow-emerald-900/20"
+                    >
+                        <PlusCircle className="w-5 h-5" /> Record Payment
+                    </button>
+                </div>
             </div>
 
             {/* Search */}
@@ -275,6 +308,7 @@ const Payments = () => {
                                     <th className="px-6 py-4">Method</th>
                                     <th className="px-6 py-4 text-center">Receipt</th>
                                     <th className="px-6 py-4 text-right">Amount (LKR)</th>
+                                    <th className="px-6 py-4 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-700/50">
@@ -290,17 +324,16 @@ const Payments = () => {
                                             <td className="px-6 py-4 font-mono text-slate-300">{p.member?.membershipNo || 'N/A'}</td>
                                             <td className="px-6 py-4 font-medium text-white">{p.member?.fullName || 'Unknown Member'}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                                                    (p.paymentType || p.type) === 'Fine' ? 'bg-red-500/10 text-red-400 border border-red-500/30' :
-                                                    'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                                                }`}>
+                                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${(p.paymentType || p.type) === 'Fine' ? 'bg-red-500/10 text-red-400 border border-red-500/30' :
+                                                        'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                                    }`}>
                                                     {p.paymentType || p.type}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-xs font-medium text-slate-300">
                                                 {p.paymentMethod || 'Cash'}
                                             </td>
-                                            {/* Receipt Preview Column */}
+                                            {/* Receipt Attachment View Column */}
                                             <td className="px-6 py-4 text-center">
                                                 {p.receiptUrl ? (
                                                     <button
@@ -316,11 +349,22 @@ const Payments = () => {
                                             <td className="px-6 py-4 text-right font-bold text-white font-mono">
                                                 Rs. {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                             </td>
+
+                                            {/* Table Actions Column - Download Single Receipt PDF */}
+                                            <td className="px-6 py-4 text-center">
+                                                <button
+                                                    onClick={() => generateReceiptPDF(p)}
+                                                    title="Download Payment Receipt PDF"
+                                                    className="p-1.5 bg-slate-700 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-600"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="8" className="px-6 py-8 text-center text-slate-500">
+                                        <td colSpan="9" className="px-6 py-8 text-center text-slate-500">
                                             No payment records found.
                                         </td>
                                     </tr>
@@ -379,7 +423,7 @@ const Payments = () => {
                                     className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
                                 >
                                     <option value="Monthly Subscription">Monthly Subscription</option>
-                                    <option value="Fine">Fine Only (දඩ මුදල පමණක්)</option>
+                                    <option value="Fine">Fine Only</option>
                                     <option value="Admission Fee">Admission Fee</option>
                                 </select>
                             </div>
@@ -407,13 +451,12 @@ const Payments = () => {
                                                     key={m.value}
                                                     disabled={isPaid}
                                                     onClick={() => handleMonthToggle(m.value)}
-                                                    className={`py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center justify-center relative ${
-                                                        isPaid 
-                                                            ? 'bg-slate-800/40 text-slate-600 border border-slate-800/80 cursor-not-allowed' 
-                                                            : isSelected 
+                                                    className={`py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center justify-center relative ${isPaid
+                                                            ? 'bg-slate-800/40 text-slate-600 border border-slate-800/80 cursor-not-allowed'
+                                                            : isSelected
                                                                 ? isLate ? 'bg-amber-600 text-white shadow-md' : 'bg-emerald-600 text-white shadow-md'
                                                                 : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <span className="flex items-center gap-1">
                                                         {m.label}
@@ -473,7 +516,7 @@ const Payments = () => {
                                 </div>
                             </div>
 
-                            {/* Receipt File Upload Field (Appears only for Bank Transfer or Optional) */}
+                            {/* Receipt File Upload Field */}
                             {formData.paymentMethod === 'Bank Transfer' && (
                                 <div className="bg-slate-900 p-3 rounded-lg border border-slate-700">
                                     <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">

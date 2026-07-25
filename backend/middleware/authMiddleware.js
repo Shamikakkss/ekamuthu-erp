@@ -16,24 +16,28 @@ const protect = async (req, res, next) => {
             // Get user from the token and attach to req.user (excluding password)
             req.user = await User.findById(decoded.id).select('-password');
 
-            next();
+            if (!req.user) {
+                return res.status(401).json({ message: 'User not found, token invalid' });
+            }
+
+            return next();
         } catch (error) {
-            console.error(error);
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            console.error('Auth Error:', error.message);
+            return res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
 
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token provided' });
+        return res.status(401).json({ message: 'Not authorized, no token provided' });
     }
 };
 
 // Middleware to check User Roles (e.g., Admin, Treasurer)
 const authorize = (...roles) => {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
+        if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({ 
-                message: `User role '${req.user.role}' is not authorized to access this route` 
+                message: `User role '${req.user?.role || 'Guest'}' is not authorized to access this route` 
             });
         }
         next();

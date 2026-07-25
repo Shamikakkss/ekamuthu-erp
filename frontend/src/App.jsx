@@ -5,36 +5,56 @@ import Dashboard from './pages/Dashboard';
 import Members from './pages/Members';
 import Payments from './pages/Payments';
 import Claims from './pages/Claims';
+import UserPortal from './pages/UserPortal'; // 1. User Portal එක import කරගන්න
 
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ allowedRoles, children }) => {
     const token = localStorage.getItem('token');
-    return token ? children : <Navigate to="/" replace />;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+    if (!token) {
+        return <Navigate to="/" replace />;
+    }
+
+    // Role එක අනුව Redirect කිරීම
+    if (allowedRoles && !allowedRoles.includes(userInfo.role)) {
+        return userInfo.role === 'Member' 
+            ? <Navigate to="/portal" replace /> 
+            : <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
 };
 
 function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Route */}
                 <Route path="/" element={<Login />} />
 
-                {/* Protected Dashboard Routes */}
+                {/* Normal Member Portal Route */}
+                <Route
+                    path="/portal"
+                    element={
+                        <ProtectedRoute allowedRoles={['Member']}>
+                            <UserPortal />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Admin Dashboard Routes */}
                 <Route 
                     path="/dashboard" 
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin', 'SuperAdmin', 'Treasurer']}>
                             <Dashboard />
                         </ProtectedRoute>
                     } 
                 >
-                    {/* Nested Sub-pages (Dashboard එක ඇතුලේ Sidebar එක හරහා මාරු වන Pages) */}
                     <Route path="members" element={<Members />} />
                     <Route path="payments" element={<Payments />} />
                     <Route path="claims" element={<Claims />} />
                 </Route>
 
-                {/* Catch-all Route for Undefined Paths */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>
