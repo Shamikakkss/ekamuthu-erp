@@ -28,15 +28,22 @@ const paymentSchema = new mongoose.Schema({
         type: String
     },
     receiptNo: {
-        type: String
+        type: String,
+        unique: true
     },
     receiptUrl: {
-        type: String, 
+        type: String,
         default: null
     },
     recordedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    // Payment approval status for member-submitted payments
+    status: {
+        type: String,
+        enum: ['Pending', 'Approved', 'Rejected'],
+        default: 'Approved'
     }
 }, {
     timestamps: true

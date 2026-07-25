@@ -2,22 +2,32 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const Payment = require('../models/Payment'); // ඔයාගේ Payment Model එක
+const { protect, authorize } = require('../middleware/authMiddleware');
+const {
+    createPayment,
+    getAllPayments,
+    getMemberPayments,
+    getMyPayments,
+    submitMemberPayment,
+    updatePaymentStatus
+} = require('../controllers/paymentController');
 
-// 1. Multer Storage Engine එක Configure කිරීම (Unique File Names සැකසීමට)
+// ---------------------------------------------------------------
+// Multer Storage Configuration (Unique filenames for receipts)
+// ---------------------------------------------------------------
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/receipts/'); // File එක Save වෙන තැන
+        cb(null, 'uploads/receipts/'); // Directory where files are saved
     },
     filename: (req, file, cb) => {
-        // File Name එක Duplicate නොවීමට Unique Timestamp එකක් එකතු කිරීම
+        // Add unique timestamp to prevent duplicate filenames
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = path.extname(file.originalname);
         cb(null, 'receipt-' + uniqueSuffix + ext);
     }
 });
 
-// 2. File Type Filter (Images & PDFs විතරක් Allow කිරීම)
+// File type filter — Allow only images and PDFs
 const fileFilter = (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
     if (allowedTypes.includes(file.mimetype)) {
@@ -27,59 +37,37 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ 
+// Multer upload middleware instance (5MB max file size)
+const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // Maximum 5MB Limit
+    limits: { fileSize: 5 * 1024 * 1024 } // Maximum 5MB limit
 });
 
-// 3. GET Route for Fetching All Payments
-router.get('/', async (req, res) => {
-    try {
-        const payments = await Payment.find()
-            .populate('member', 'fullName membershipNo nic')
-            .populate('recordedBy', 'fullName role')
-            .sort({ createdAt: -1 });
+// ---------------------------------------------------------------
+// Member Routes (Logged-in member self-service)
+// ---------------------------------------------------------------
 
-        res.json(payments);
-    } catch (err) {
-        console.error('Error fetching payments:', err);
-        res.status(500).json({ message: err.message || 'Server error fetching payments' });
-    }
-});
+// Get logged-in member's own payment history
+router.get('/my-payments', protect, getMyPayments);
 
-// 4. POST Route for Recording Payment with Receipt Attachment
-router.post('/', upload.single('receipt'), async (req, res) => {
-    try {
-        const { memberId, amount, paymentType, monthYear, paymentMethod, remarks } = req.body;
+// Member submits a payment receipt for approval
+router.post('/submit', protect, upload.single('receipt'), submitMemberPayment);
 
-        // Upload වුණු File එකක් තිබේ නම් අදාළ File Path එක සැකසීම
-        let receiptUrl = null;
-        if (req.file) {
-            // Full URL path to access from frontend
-            receiptUrl = `${req.protocol}://${req.get('host')}/uploads/receipts/${req.file.filename}`;
-        }
+// ---------------------------------------------------------------
+// Admin & Treasurer Routes
+// ---------------------------------------------------------------
 
-        const receiptNo = `REC-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+// Get all payment records with member details
+router.get('/', protect, authorize('Admin', 'Treasurer'), getAllPayments);
 
-        const newPayment = new Payment({
-            member: memberId,
-            amount,
-            paymentType,
-            monthYear,
-            paymentMethod,
-            remarks,
-            receiptNo,
-            receiptUrl // Receipts File URL එක DB එකට Save වෙනවා
-        });
+// Get payments for a specific member by ID
+router.get('/member/:memberId', protect, getMemberPayments);
 
-        await newPayment.save();
-        res.status(201).json({ message: 'Payment recorded successfully', payment: newPayment });
+// Record a new payment with optional receipt attachment
+router.post('/', protect, authorize('Admin', 'Treasurer'), upload.single('receipt'), createPayment);
 
-    } catch (err) {
-        console.error('Error saving payment:', err);
-        res.status(500).json({ message: err.message || 'Server error recording payment' });
-    }
-});
+// Approve or reject a member-submitted payment
+router.put('/:id/status', protect, authorize('Admin', 'Treasurer'), updatePaymentStatus);
 
 module.exports = router;

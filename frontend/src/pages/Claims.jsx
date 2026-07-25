@@ -276,7 +276,7 @@ const Claims = () => {
 
                             {/* Deceased Name */}
                             <div>
-                                <label className="block text-xs font-medium text-slate-300 mb-1">Deceased Person's Full Name (මියගිය අයගේ නම)</label>
+                                <label className="block text-xs font-medium text-slate-300 mb-1">Deceased Person's Full Name</label>
                                 <input
                                     type="text" required
                                     placeholder="Enter full name of deceased"
@@ -295,10 +295,10 @@ const Claims = () => {
                                         onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
                                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
                                     >
-                                        <option value="Self">Self (සාමාජිකයා)</option>
-                                        <option value="Spouse">Spouse (ස්වාමියා/බිරිඳ)</option>
-                                        <option value="Child">Child (දරුවා)</option>
-                                        <option value="Parent">Parent (මව්/පිය)</option>
+                                        <option value="Self">Self</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Child">Child</option>
+                                        <option value="Parent">Parent</option>
                                     </select>
                                 </div>
                                 <div>

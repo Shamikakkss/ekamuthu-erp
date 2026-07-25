@@ -14,3 +14,17 @@ API.interceptors.request.use((req) => {
 });
 
 export default API;
+
+// Fetch payments for the logged-in member
+export const getMyPayments = async () => {
+  const response = await API.get('/payments/my-payments');
+  return response.data;
+};
+
+// Submit a payment receipt by the member
+export const submitMemberPayment = async (formData) => {
+  const response = await API.post('/payments/submit', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};

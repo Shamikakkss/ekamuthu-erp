@@ -18,12 +18,20 @@ const Login = () => {
         try {
             const { data } = await API.post('/auth/login', { nic, password });
             
-            // Save Token and User details in LocalStorage
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userInfo', JSON.stringify(data));
+            // Extract user details (handles both nested 'data.user' or flat 'data' structures)
+            const token = data.token;
+            const user = data.user || data;
 
-            // Redirect to Dashboard
-            navigate('/dashboard');
+            // Save Token and User details in LocalStorage
+            localStorage.setItem('token', token);
+            localStorage.setItem('userInfo', JSON.stringify(user));
+
+            // Role-based Redirection
+            if (user.role === 'Member') {
+                navigate('/portal');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {
@@ -35,8 +43,12 @@ const Login = () => {
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-slate-800 rounded-xl shadow-2xl p-8 border border-slate-700">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-white tracking-wide">Ekamuthu<span className="text-emerald-500">ERP</span></h1>
-                    <p className="text-slate-400 text-sm mt-2">Community Mutual Aid Management System</p>
+                    <h1 className="text-3xl font-bold text-white tracking-wide">
+                        Ekamuthu<span className="text-emerald-500">ERP</span>
+                    </h1>
+                    <p className="text-slate-400 text-sm mt-2">
+                        Community Mutual Aid Management System
+                    </p>
                 </div>
 
                 {error && (
@@ -48,7 +60,9 @@ const Login = () => {
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">National Identity Card (NIC)</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                            National Identity Card (NIC)
+                        </label>
                         <div className="relative">
                             <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                             <input
@@ -63,7 +77,9 @@ const Login = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                            Password
+                        </label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                             <input
