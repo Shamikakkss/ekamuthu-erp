@@ -8,8 +8,8 @@ import {
 import { generateReceiptPDF, generateFinancialReportPDF } from '../utils/generatePDF';
 
 const Payments = () => {
-    const currentYear = new Date().getFullYear(); // 2026
-    const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g. '2026-07'
+    const currentYear = new Date().getFullYear();
+    const currentMonthStr = new Date().toISOString().slice(0, 7);
 
     const monthsList = [
         { label: 'Jan', value: `${currentYear}-01` },
@@ -32,7 +32,7 @@ const Payments = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [previewReceipt, setPreviewReceipt] = useState(null); // Receipt preview state
+    const [previewReceipt, setPreviewReceipt] = useState(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -238,13 +238,24 @@ const Payments = () => {
     const getStatusBadge = (status) => {
         switch (status) {
             case 'Pending':
-                return <span className="bg-yellow-100 text-yellow-800 text-xs px-2.5 py-1 rounded-full font-semibold">⏳ Pending Approval</span>;
+                return <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">⏳ Pending</span>;
             case 'Approved':
-                return <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">✅ Approved</span>;
+                return <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">✅ Approved</span>;
             case 'Rejected':
-                return <span className="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">❌ Rejected</span>;
+                return <span className="bg-red-500/10 text-red-400 border border-red-500/30 text-xs px-2.5 py-1 rounded-full font-semibold font-semibold">❌ Rejected</span>;
             default:
-                return <span className="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full">Approved</span>;
+                return <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Approved</span>;
+        }
+    };
+
+    // Payment Status Update (Approve / Reject)
+    const handleStatusUpdate = async (paymentId, newStatus) => {
+        try {
+            await API.put(`/payments/${paymentId}/status`, { status: newStatus });
+            fetchData();
+        } catch (err) {
+            console.error('Failed to update payment status:', err);
+            alert(err.response?.data?.message || 'Error updating status');
         }
     };
 
@@ -306,6 +317,7 @@ const Payments = () => {
                                     <th className="px-6 py-4">Member Name</th>
                                     <th className="px-6 py-4">Type</th>
                                     <th className="px-6 py-4">Method</th>
+                                    <th className="px-6 py-4 text-center">Status</th>
                                     <th className="px-6 py-4 text-center">Receipt</th>
                                     <th className="px-6 py-4 text-right">Amount (LKR)</th>
                                     <th className="px-6 py-4 text-center">Actions</th>
@@ -325,7 +337,7 @@ const Payments = () => {
                                             <td className="px-6 py-4 font-medium text-white">{p.member?.fullName || 'Unknown Member'}</td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${(p.paymentType || p.type) === 'Fine' ? 'bg-red-500/10 text-red-400 border border-red-500/30' :
-                                                        'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                                    'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                                                     }`}>
                                                     {p.paymentType || p.type}
                                                 </span>
@@ -333,6 +345,12 @@ const Payments = () => {
                                             <td className="px-6 py-4 text-xs font-medium text-slate-300">
                                                 {p.paymentMethod || 'Cash'}
                                             </td>
+
+                                            {/* Status Badge Column */}
+                                            <td className="px-6 py-4 text-center">
+                                                {getStatusBadge(p.status)}
+                                            </td>
+
                                             {/* Receipt Attachment View Column */}
                                             <td className="px-6 py-4 text-center">
                                                 {p.receiptUrl ? (
@@ -350,21 +368,42 @@ const Payments = () => {
                                                 Rs. {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                             </td>
 
-                                            {/* Table Actions Column - Download Single Receipt PDF */}
+                                            {/* Table Actions Column - Approve/Reject + Download PDF */}
                                             <td className="px-6 py-4 text-center">
-                                                <button
-                                                    onClick={() => generateReceiptPDF(p)}
-                                                    title="Download Payment Receipt PDF"
-                                                    className="p-1.5 bg-slate-700 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-600"
-                                                >
-                                                    <Download className="w-4 h-4" />
-                                                </button>
+                                                <div className="flex items-center justify-center gap-2">
+                                                    {p.status === 'Pending' && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(p._id, 'Approved')}
+                                                                title="Approve Payment"
+                                                                className="p-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-lg transition-colors border border-emerald-500/30"
+                                                            >
+                                                                <Check className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(p._id, 'Rejected')}
+                                                                title="Reject Payment"
+                                                                className="p-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded-lg transition-colors border border-red-500/30"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </>
+                                                    )}
+
+                                                    <button
+                                                        onClick={() => generateReceiptPDF(p)}
+                                                        title="Download Payment Receipt PDF"
+                                                        className="p-1.5 bg-slate-700 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-600"
+                                                    >
+                                                        <Download className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="9" className="px-6 py-8 text-center text-slate-500">
+                                        <td colSpan="10" className="px-6 py-8 text-center text-slate-500">
                                             No payment records found.
                                         </td>
                                     </tr>
@@ -452,10 +491,10 @@ const Payments = () => {
                                                     disabled={isPaid}
                                                     onClick={() => handleMonthToggle(m.value)}
                                                     className={`py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center justify-center relative ${isPaid
-                                                            ? 'bg-slate-800/40 text-slate-600 border border-slate-800/80 cursor-not-allowed'
-                                                            : isSelected
-                                                                ? isLate ? 'bg-amber-600 text-white shadow-md' : 'bg-emerald-600 text-white shadow-md'
-                                                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                                                        ? 'bg-slate-800/40 text-slate-600 border border-slate-800/80 cursor-not-allowed'
+                                                        : isSelected
+                                                            ? isLate ? 'bg-amber-600 text-white shadow-md' : 'bg-emerald-600 text-white shadow-md'
+                                                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                                                         }`}
                                                 >
                                                     <span className="flex items-center gap-1">
@@ -596,11 +635,18 @@ const Payments = () => {
                             <FileText className="text-emerald-500" /> Payment Receipt Preview
                         </h3>
                         <div className="bg-slate-900 rounded-lg p-2 max-h-[75vh] overflow-y-auto flex justify-center items-center">
-                            {previewReceipt.endsWith('.pdf') ? (
-                                <iframe src={previewReceipt} className="w-full h-[60vh] rounded-lg" title="Receipt PDF" />
-                            ) : (
-                                <img src={previewReceipt} alt="Receipt Slip" className="max-w-full max-h-[70vh] object-contain rounded-lg" />
-                            )}
+                            {(() => {
+                                // Backend URL එක relative path එකට එකතු කිරීම
+                                const fullUrl = previewReceipt.startsWith('http')
+                                    ? previewReceipt
+                                    : `http://localhost:5000${previewReceipt.startsWith('/') ? '' : '/'}${previewReceipt}`;
+
+                                return previewReceipt.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe src={fullUrl} className="w-full h-[60vh] rounded-lg" title="Receipt PDF" />
+                                ) : (
+                                    <img src={fullUrl} alt="Receipt Slip" className="max-w-full max-h-[70vh] object-contain rounded-lg" />
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>

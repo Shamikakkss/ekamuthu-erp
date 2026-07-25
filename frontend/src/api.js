@@ -33,3 +33,9 @@ export const submitMemberPayment = async (formData) => {
 export const getMemberDashboardSummary = () => {
     return API.get('/payments/my-summary');
 };
+
+// Admin status update function
+export const updatePaymentStatus = async (paymentId, status) => {
+    const response = await API.put(`/payments/${paymentId}/status`, { status });
+    return response.data;
+};

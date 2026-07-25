@@ -40,3 +40,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
 });
+
+const path = require('path');
+
+// Express static folder serve කිරීම
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
