@@ -28,3 +28,8 @@ export const submitMemberPayment = async (formData) => {
   });
   return response.data;
 };
+
+// Get Member's Payment History & Summary (Due Months, Total Paid)
+export const getMemberDashboardSummary = () => {
+    return API.get('/payments/my-summary');
+};

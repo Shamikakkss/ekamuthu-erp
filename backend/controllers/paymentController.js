@@ -1,12 +1,12 @@
 const Payment = require('../models/Payment');
 const User = require('../models/User');
 
-// @desc    Record a new payment (Collect cash)
+// @desc    Record a new payment (Collect cash by Admin/Treasurer)
 // @route   POST /api/payments
 // @access  Private (Admin & Treasurer only)
 const createPayment = async (req, res) => {
     try {
-        const { memberId, amount, paymentType, monthYear, paymentMethod, remarks, description } = req.body;
+        const { memberId, amount, paymentType, monthYear, paymentMethod, remarks, description, status } = req.body;
 
         // Check if member exists
         const member = await User.findById(memberId);
@@ -14,7 +14,7 @@ const createPayment = async (req, res) => {
             return res.status(404).json({ message: 'Member not found' });
         }
 
-        // Generate a unique receipt number (e.g., REC-1721758923-4821)
+        // Generate a unique receipt number
         const receiptNo = `REC-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
         // Build receipt URL if a file was uploaded via multer
@@ -25,7 +25,7 @@ const createPayment = async (req, res) => {
 
         const payment = await Payment.create({
             member: memberId,
-            amount,
+            amount: Number(amount),
             paymentType,
             monthYear,
             paymentMethod: paymentMethod || 'Cash',
@@ -33,7 +33,8 @@ const createPayment = async (req, res) => {
             description,
             receiptNo,
             receiptUrl,
-            recordedBy: req.user._id // Taken from protect middleware
+            status: status || 'Approved', // Admin direct add කරද්දී Default 'Approved'
+            recordedBy: req.user._id
         });
 
         res.status(201).json({
@@ -53,7 +54,7 @@ const getAllPayments = async (req, res) => {
         const payments = await Payment.find()
             .populate('member', 'fullName membershipNo nic')
             .populate('recordedBy', 'fullName role')
-            .sort({ createdAt: -1 }); // Latest payments first
+            .sort({ createdAt: -1 });
 
         res.json(payments);
     } catch (error) {
@@ -76,8 +77,6 @@ const getMemberPayments = async (req, res) => {
     }
 };
 
-// backend/controllers/paymentController.js
-
 // @desc    Get logged in member's payments
 // @route   GET /api/payments/my-payments
 // @access  Private (Logged-in Member)
@@ -90,19 +89,29 @@ const getMyPayments = async (req, res) => {
   }
 };
 
-// @desc    Member submits a payment receipt for approval
+// @desc    Member submits a payment receipt or Direct Card Payment
 // @route   POST /api/payments/submit
 // @access  Private (Logged-in Member)
+// backend/controllers/paymentController.js -> submitMemberPayment
+
 const submitMemberPayment = async (req, res) => {
   try {
-    const { amount, paymentType, monthYear, paymentMethod, remarks } = req.body;
+    const { amount, paymentType, monthYear, paymentMethod, remarks, status } = req.body;
 
     const receiptUrl = req.file ? `/uploads/receipts/${req.file.filename}` : null;
     const receiptNo = `REC-${Date.now()}`;
 
+    let finalStatus = status;
+    if (!finalStatus) {
+        finalStatus = (paymentMethod === 'Credit/Debit Card' || paymentMethod === 'Card') ? 'Approved' : 'Pending';
+    }
+
+    // Amount එක Number / Float එකක් බවට හරියටම Convert කරගන්නවා
+    const parsedAmount = parseFloat(amount);
+
     const newPayment = new Payment({
-      member: req.user._id, // Logged in user's ID
-      amount,
+      member: req.user._id,
+      amount: parsedAmount, // <-- මෙතන 600 හරියටම වැටෙනවා
       paymentType,
       monthYear,
       paymentMethod: paymentMethod || 'Bank Transfer',
@@ -110,7 +119,7 @@ const submitMemberPayment = async (req, res) => {
       receiptNo,
       receiptUrl,
       recordedBy: req.user._id,
-      status: 'Pending' // Requires Treasurer/Admin Approval
+      status: finalStatus
     });
 
     const savedPayment = await newPayment.save();
@@ -119,6 +128,7 @@ const submitMemberPayment = async (req, res) => {
     res.status(500).json({ message: 'Error submitting payment', error: error.message });
   }
 };
+
 
 // @desc    Admin/Treasurer approve or reject a member payment
 // @route   PUT /api/payments/:id/status
