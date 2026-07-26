@@ -16,8 +16,11 @@ const registerUser = async (req, res) => {
     try {
         const { fullName, nic, phone, address, password, role, dependents } = req.body;
 
+        // Sanitize NIC (remove spaces and convert to uppercase)
+        const normalizedNic = nic ? nic.trim().toUpperCase() : '';
+
         // 1. Check if user already exists with NIC
-        const userExists = await User.findOne({ nic });
+        const userExists = await User.findOne({ nic: normalizedNic });
         if (userExists) {
             return res.status(400).json({ message: 'User with this NIC already exists' });
         }
@@ -34,7 +37,7 @@ const registerUser = async (req, res) => {
         const user = await User.create({
             membershipNo: generatedMembershipNo, // Auto-generated ID passed here
             fullName,
-            nic,
+            nic: normalizedNic,
             phone,
             address,
             password: hashedPassword,
@@ -66,8 +69,11 @@ const loginUser = async (req, res) => {
     try {
         const { nic, password } = req.body;
 
+        // Sanitize NIC (remove spaces and convert to uppercase)
+        const normalizedNic = nic ? nic.trim().toUpperCase() : '';
+
         // Find user by NIC
-        const user = await User.findOne({ nic });
+        const user = await User.findOne({ nic: normalizedNic });
 
         // Check user existence & compare password
         if (user && (await bcrypt.compare(password, user.password))) {
