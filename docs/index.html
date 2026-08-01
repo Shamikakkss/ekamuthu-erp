@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EkamuthuERP - Community Mutual Aid & Death Donation Society Management System</title>
-  <meta name="description" content="Cloud-Based Community Mutual Aid & Death Donation Society Management System (මරණාධාර සමිති ERP පද්ධතිය)">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EkamuthuERP - Community Mutual Aid & Welfare Management System</title>
+  <meta name="description" content="Cloud-Based Community Mutual Aid & Death Donation Society Management System for digitalizing member records, monthly dues, automated late fines, bank slip verification, and benefit claims." />
   
-  <!-- Fonts -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
     :root {
       --bg-dark: #0f172a;
       --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-hover: rgba(51, 65, 85, 0.85);
       --border-color: rgba(255, 255, 255, 0.1);
       --primary: #3b82f6;
       --primary-hover: #2563eb;
-      --accent: #10b981;
+      --primary-cyan: #38bdf8;
+      --accent-green: #10b981;
       --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -33,8 +36,12 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-main);
       line-height: 1.6;
@@ -47,9 +54,9 @@
       top: -10%;
       left: 50%;
       transform: translateX(-50%);
-      width: 1000px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.05) 50%, transparent 70%);
+      width: 1100px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%);
       z-index: -1;
       pointer-events: none;
     }
@@ -57,7 +64,8 @@
     /* Header Navbar */
     header {
       backdrop-filter: blur(16px);
-      background: rgba(15, 23, 42, 0.8);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(15, 23, 42, 0.85);
       border-bottom: 1px solid var(--border-color);
       position: sticky;
       top: 0;
@@ -77,19 +85,24 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: #fff;
       text-decoration: none;
+      letter-spacing: -0.02em;
     }
 
     .logo i {
-      color: var(--primary);
+      color: var(--primary-cyan);
+      background: rgba(56, 189, 248, 0.15);
+      padding: 0.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
     .nav-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 1.75rem;
       align-items: center;
       list-style: none;
     }
@@ -99,24 +112,25 @@
       text-decoration: none;
       font-weight: 500;
       font-size: 0.95rem;
-      transition: color 0.2s;
+      transition: color 0.2s ease;
     }
 
     .nav-links a:hover {
-      color: var(--primary);
+      color: var(--primary-cyan);
     }
 
     .btn-github {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-color);
       color: #fff;
-      padding: 0.5rem 1.25rem;
+      padding: 0.55rem 1.35rem;
       border-radius: 9999px;
       text-decoration: none;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: 0.9rem;
       transition: all 0.3s ease;
     }
 
@@ -124,13 +138,14 @@
       background: var(--primary);
       border-color: var(--primary);
       transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
 
     /* Hero Section */
     .hero {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 5rem 2rem 3rem;
+      padding: 5.5rem 2rem 3.5rem;
       text-align: center;
     }
 
@@ -138,50 +153,56 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
       color: #60a5fa;
-      padding: 0.4rem 1rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
       font-size: 0.875rem;
       font-weight: 600;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
     }
 
     .hero h1 {
-      font-size: 3rem;
+      font-size: 3.25rem;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
       margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .hero-subtitle {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       color: var(--text-muted);
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto 2.5rem;
       font-weight: 400;
+      line-height: 1.7;
     }
 
     .hero-btns {
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 1.25rem;
       flex-wrap: wrap;
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
       color: #fff;
-      padding: 0.85rem 2rem;
+      padding: 0.85rem 2.25rem;
       border-radius: 0.75rem;
       text-decoration: none;
       font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
       box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-      transition: all 0.3s;
+      transition: all 0.3s ease;
     }
 
     .btn-primary:hover {
@@ -193,32 +214,82 @@
       background: rgba(30, 41, 59, 0.8);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 0.85rem 2rem;
+      padding: 0.85rem 2.25rem;
       border-radius: 0.75rem;
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.3s;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
-      background: rgba(51, 65, 85, 0.8);
+      background: rgba(51, 65, 85, 0.85);
+      border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-2px);
     }
 
-    /* Features Grid */
+    /* Stats Grid */
+    .stats-container {
+      max-width: 1200px;
+      margin: 2rem auto 4rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .stat-icon {
+      font-size: 1.8rem;
+      color: var(--primary-cyan);
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-number {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Features Section */
     .section-title {
       text-align: center;
-      margin: 5rem 0 3rem;
+      margin: 4.5rem 0 3rem;
     }
 
     .section-title h2 {
       font-size: 2.25rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     .section-title p {
       color: var(--text-muted);
       margin-top: 0.5rem;
+      font-size: 1.05rem;
     }
 
     .features-grid {
@@ -227,7 +298,7 @@
       padding: 0 2rem;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 1.5rem;
+      gap: 1.75rem;
     }
 
     .card {
@@ -237,6 +308,7 @@
       padding: 2rem;
       backdrop-filter: blur(12px);
       transition: all 0.3s ease;
+      position: relative;
     }
 
     .card:hover {
@@ -246,28 +318,106 @@
     }
 
     .card-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 0.75rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 0.85rem;
       background: rgba(59, 130, 246, 0.15);
-      color: var(--primary);
+      color: var(--primary-cyan);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       margin-bottom: 1.25rem;
+    }
+
+    .card-icon.amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+    }
+
+    .card-icon.green {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+    }
+
+    .card-icon.purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
     }
 
     .card h3 {
       font-size: 1.25rem;
       margin-bottom: 0.75rem;
       font-weight: 600;
+      color: #fff;
     }
 
     .card p {
       color: var(--text-muted);
       font-size: 0.95rem;
-      line-height: 1.6;
+      line-height: 1.65;
+    }
+
+    /* Workflow Stepper */
+    .workflow-section {
+      max-width: 1200px;
+      margin: 5rem auto;
+      padding: 0 2rem;
+    }
+
+    .workflow-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1.5rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .stepper-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .stepper-step {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .stepper-step:hover {
+      border-color: var(--primary-cyan);
+      transform: translateY(-3px);
+    }
+
+    .step-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin: 0 auto 0.85rem;
+    }
+
+    .step-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     /* Tech Stack Section */
@@ -283,6 +433,7 @@
       border-radius: 1.5rem;
       padding: 3rem 2rem;
       text-align: center;
+      backdrop-filter: blur(12px);
     }
 
     .tech-tags {
@@ -296,17 +447,24 @@
     .tech-tag {
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--border-color);
-      padding: 0.6rem 1.25rem;
+      padding: 0.65rem 1.35rem;
       border-radius: 0.75rem;
       font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       color: #e2e8f0;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .tech-tag:hover {
+      border-color: var(--primary-cyan);
+      transform: translateY(-2px);
     }
 
     .tech-tag i {
-      color: var(--accent);
+      color: var(--accent-green);
     }
 
     /* Footer */
@@ -317,22 +475,31 @@
       color: var(--text-muted);
       font-size: 0.9rem;
       margin-top: 5rem;
+      background: rgba(15, 23, 42, 0.9);
     }
 
     footer a {
-      color: var(--primary);
+      color: var(--primary-cyan);
       text-decoration: none;
+      font-weight: 500;
     }
 
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 2.25rem; }
+      .hero h1 { font-size: 2.35rem; }
       .hero-subtitle { font-size: 1rem; }
       .nav-links { display: none; }
+      .stepper-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Glow Background Effect -->
   <div class="glow-bg"></div>
 
   <!-- Navigation Bar -->
@@ -344,6 +511,7 @@
       <ul class="nav-links">
         <li><a href="#overview">Overview</a></li>
         <li><a href="#features">Features</a></li>
+        <li><a href="#workflow">Workflow</a></li>
         <li><a href="#techstack">Tech Stack</a></li>
       </ul>
       <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank" class="btn-github">
@@ -355,11 +523,11 @@
   <!-- Hero Section -->
   <section class="hero" id="overview">
     <div class="badge">
-      <i class="fa-solid fa-shield-halved"></i> Community Mutual Aid ERP System
+      <i class="fa-solid fa-shield-halved"></i> Community Mutual Aid &amp; Welfare ERP System
     </div>
-    <h1>එකමුතු ERP - මරණාධාර සමිති පද්ධතිය</h1>
+    <h1>EkamuthuERP - Death Donation &amp; Mutual Aid Society Management System</h1>
     <p class="hero-subtitle">
-      ග්‍රාමීය සහ ප්‍රජා මරණාධාර සමිති වල සාමාජික තොරතුරු, මාසික මුදල් එකතු කිරීම, ප්‍රමාද ගාස්තු (Late Fines), බැංකු රිසිට්පත් සහ මරණාධාර හිමිකම් කළමනාකරණය සඳහා නිර්මාණය කළ සම්පූර්ණ ඩිජිටල් පද්ධතිය.
+      A comprehensive cloud-based ERP solution engineered to streamline membership management, monthly dues collection, automated late fines, bank deposit slip verification, and death benefit claim workflows for community welfare societies.
     </p>
     <div class="hero-btns">
       <a href="#features" class="btn-primary">
@@ -371,54 +539,114 @@
     </div>
   </section>
 
-  <!-- Main Features Section -->
+  <!-- Key Metrics / Stats Section -->
+  <section class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-users-gear"></i></div>
+      <div class="stat-number">RBAC Engine</div>
+      <div class="stat-label">Admin, Treasurer &amp; Member Roles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--accent-amber);"><i class="fa-solid fa-calculator"></i></div>
+      <div class="stat-number">Auto Fines</div>
+      <div class="stat-label">Smart Monthly Fee Rules</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--accent-green);"><i class="fa-solid fa-file-circle-check"></i></div>
+      <div class="stat-number">Slip Verify</div>
+      <div class="stat-label">Instant Slip Approval Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--accent-purple);"><i class="fa-solid fa-file-pdf"></i></div>
+      <div class="stat-number">PDF Receipts</div>
+      <div class="stat-label">Automated Statement Export</div>
+    </div>
+  </section>
+
+  <!-- Core Features Section -->
   <section id="features">
     <div class="section-title">
-      <h2>ප්‍රධාන පද්ධති මොඩියුල (Core Modules)</h2>
-      <p>Powerful tools designed for smooth society administration</p>
+      <h2>Core System Modules</h2>
+      <p>Powerful digital tools engineered for transparent society administration and seamless member participation</p>
     </div>
 
     <div class="features-grid">
       <!-- Feature 1 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-users"></i></div>
-        <h3>සාමාජික කළමනාකරණය (Members Directory)</h3>
-        <p>සමිති සාමාජිකයින්ගේ NIC, දුරකථන අංක, යැපෙන්නන්ගේ (Dependents) විස්තර පවත්වාගෙන යාම සහ Role System (Admin, Treasurer, Member) පාලනය.</p>
+        <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
+        <h3>Member &amp; Dependent Directory</h3>
+        <p>Comprehensive record keeping for member NICs, contact information, family dependent profiles, and granular Role-Based Access Control (Admin, Treasurer, Member).</p>
       </div>
 
       <!-- Feature 2 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
-        <h3>ස්වයංක්‍රීය ප්‍රමාද ගාස්තු (Automated Fines)</h3>
-        <p>නියමිත දිනට පසුව ගෙවන සෑම මාසයක් සඳහාම රු. 100/- ක ප්‍රමාද ගාස්තුව පද්ධතිය මගින්ම ස්වයංක්‍රීයව ගණනය කර මාසික එකතුවට එකතු කිරීම.</p>
+        <div class="card-icon amber"><i class="fa-solid fa-calculator"></i></div>
+        <h3>Automated Late Fine Engine</h3>
+        <p>Automated calculation and tagging of overdue fines (e.g., LKR 100/month) for payments made past the due date, seamlessly integrated into monthly account statements.</p>
       </div>
 
       <!-- Feature 3 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-        <h3>Bank Slip Upload & Approval</h3>
-        <p>සාමාජිකයින්ට තමන්ගේ ගෙවීම් රිසිට්පත් upload කළ හැකි අතර, Admin/Treasurer හට ඒවා පරීක්ෂා කර Approve හෝ Reject කළ හැක.</p>
+        <div class="card-icon green"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <h3>Bank Slip Upload &amp; Verification</h3>
+        <p>Members can upload digital deposit slips directly, enabling Admins and Treasurers to inspect, verify, approve, or reject payments in real time with audit trails.</p>
       </div>
 
       <!-- Feature 4 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-chart-pie"></i></div>
-        <h3>Real-Time Analytics Dashboard</h3>
-        <p>සමිති ආදායම් වර්ධනය, මාසික ගෙවීම් ප්‍රගතිය සහ මුළු එකතු කිරීම් Recharts Interactive Graphs මගින් තත්‍ය කාලීනව දැකගත හැක.</p>
+        <div class="card-icon purple"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>Real-Time Financial Dashboard</h3>
+        <p>Interactive income growth visualizer, monthly payment progress monitors, and overall society treasury analytics powered by responsive Recharts charts.</p>
       </div>
 
       <!-- Feature 5 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-hand-holding-medical"></i></div>
-        <h3>මරණාධාර හිමිකම් (Benefit Claims)</h3>
-        <p>අභාවයකදී මරණාධාර ඉල්ලුම්පත්‍ර පද්ධතිය හරහා Submit කිරීම සහ Pending ➔ Approved ➔ Paid Workflow එක හරහා මුදල් නිකුත් කිරීම.</p>
+        <div class="card-icon amber"><i class="fa-solid fa-hand-holding-medical"></i></div>
+        <h3>Death Benefit Claim Workflow</h3>
+        <p>Streamlined claims submission for bereaved families, tracking benefits through a structured approval pipeline: <strong>Pending ➔ Approved ➔ Disbursed</strong>.</p>
       </div>
 
       <!-- Feature 6 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-file-pdf"></i></div>
-        <h3>PDF Receipts & Financial Reports</h3>
-        <p>සෑම ගෙවීමකටම Instant Printable PDF Receipt එකක් සහ මුළු සමිතියේම මූල්‍ය තත්ත්වය දැක්වෙන PDF Summary Reports ලබාගැනීම.</p>
+        <div class="card-icon green"><i class="fa-solid fa-file-pdf"></i></div>
+        <h3>PDF Receipts &amp; Audit Reports</h3>
+        <p>Instant auto-generation of downloadable PDF payment receipts and comprehensive society-wide financial summary reports for monthly meetings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Section -->
+  <section class="workflow-section" id="workflow">
+    <div class="workflow-box">
+      <h2>Society Dues &amp; Claim Process Workflow</h2>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">5 simple steps from member registration to claim disbursement</p>
+      
+      <div class="stepper-grid">
+        <div class="stepper-step">
+          <div class="step-num">1</div>
+          <div class="step-title">Register Member</div>
+          <div class="step-desc">Create profile with NIC, contact numbers, and registered dependents</div>
+        </div>
+        <div class="stepper-step">
+          <div class="step-num">2</div>
+          <div class="step-title">Upload Slip</div>
+          <div class="step-desc">Member submits monthly fee receipt or bank deposit slip online</div>
+        </div>
+        <div class="stepper-step">
+          <div class="step-num">3</div>
+          <div class="step-title">Treasurer Audit</div>
+          <div class="step-desc">Treasurer reviews slip details and verifies incoming funds</div>
+        </div>
+        <div class="stepper-step">
+          <div class="step-num">4</div>
+          <div class="step-title">Auto PDF Receipt</div>
+          <div class="step-desc">System updates payment status and issues an official PDF receipt</div>
+        </div>
+        <div class="stepper-step">
+          <div class="step-num">5</div>
+          <div class="step-title">Claim Processing</div>
+          <div class="step-desc">Submit benefit claim upon bereavement for fast approval and payout</div>
+        </div>
       </div>
     </div>
   </section>
@@ -426,22 +654,23 @@
   <!-- Technology Stack Section -->
   <section class="tech-section" id="techstack">
     <div class="tech-box">
-      <h2>🛠️ Technology Stack & Architecture</h2>
+      <h2>Technology Stack &amp; Architecture</h2>
       <p style="color: var(--text-muted); margin-top: 0.5rem;">Built using modern full-stack web technologies</p>
       <div class="tech-tags">
         <div class="tech-tag"><i class="fa-brands fa-react"></i> React 19 (Vite)</div>
         <div class="tech-tag"><i class="fa-brands fa-node-js"></i> Node.js (Express 5)</div>
         <div class="tech-tag"><i class="fa-solid fa-database"></i> MongoDB Atlas</div>
         <div class="tech-tag"><i class="fa-solid fa-palette"></i> Tailwind CSS v4</div>
-        <div class="tech-tag"><i class="fa-solid fa-key"></i> JWT & Bcrypt Auth</div>
-        <div class="tech-tag"><i class="fa-solid fa-file-pdf"></i> jsPDF & AutoTable</div>
+        <div class="tech-tag"><i class="fa-solid fa-key"></i> JWT &amp; Bcrypt Auth</div>
+        <div class="tech-tag"><i class="fa-solid fa-chart-pie"></i> Recharts Engine</div>
+        <div class="tech-tag"><i class="fa-solid fa-file-pdf"></i> jsPDF &amp; AutoTable</div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>EkamuthuERP System • Developed for Ekamuthu Community Mutual Aid Society</p>
+    <p>EkamuthuERP System • Developed for Community Mutual Aid &amp; Death Donation Societies</p>
     <p style="margin-top: 0.5rem;">Created by <a href="https://github.com/Shamikakkss" target="_blank">Shamikakkss</a></p>
   </footer>
 
