@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EkamuthuERP - Community Mutual Aid & Welfare Management System</title>
-  <meta name="description" content="Cloud-Based Community Mutual Aid & Death Donation Society Management System for digitalizing member records, monthly dues, automated late fines, bank slip verification, and benefit claims." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EkamuthuERP - Community Mutual Aid & Death Donation Society Management System</title>
+  <meta name="description" content="Cloud-Based Community Mutual Aid & Death Donation Society Management System designed to streamline member management, monthly contributions, and benefit claims.">
   
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
   <style>
     :root {
@@ -23,9 +23,9 @@
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --primary-cyan: #38bdf8;
-      --accent-green: #10b981;
-      --accent-purple: #8b5cf6;
+      --accent: #10b981;
       --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -48,15 +48,15 @@
       overflow-x: hidden;
     }
 
-    /* Background Glow Effects */
+    /* Ambient Background Glow */
     .glow-bg {
       position: fixed;
       top: -10%;
       left: 50%;
       transform: translateX(-50%);
-      width: 1100px;
-      height: 650px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%);
+      width: 1000px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.06) 50%, transparent 70%);
       z-index: -1;
       pointer-events: none;
     }
@@ -85,7 +85,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: #fff;
       text-decoration: none;
@@ -145,22 +145,49 @@
     .hero {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 5.5rem 2rem 3.5rem;
+      padding: 5rem 2rem 3rem;
       text-align: center;
     }
 
-    .badge {
+    /* Pulsing "Launching Soon" Live Badge */
+    .badge-launch {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: #60a5fa;
-      padding: 0.45rem 1.1rem;
+      gap: 0.65rem;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      padding: 0.5rem 1.25rem;
       border-radius: 9999px;
       font-size: 0.875rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 1.75rem;
+      letter-spacing: 0.03em;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--accent-amber);
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+      }
     }
 
     .hero h1 {
@@ -231,50 +258,7 @@
       transform: translateY(-2px);
     }
 
-    /* Stats Grid */
-    .stats-container {
-      max-width: 1200px;
-      margin: 2rem auto 4rem;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 1.25rem;
-      padding: 1.75rem;
-      text-align: center;
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-4px);
-    }
-
-    .stat-icon {
-      font-size: 1.8rem;
-      color: var(--primary-cyan);
-      margin-bottom: 0.75rem;
-    }
-
-    .stat-number {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* Features Section */
+    /* Core Features Grid */
     .section-title {
       text-align: center;
       margin: 4.5rem 0 3rem;
@@ -308,7 +292,6 @@
       padding: 2rem;
       backdrop-filter: blur(12px);
       transition: all 0.3s ease;
-      position: relative;
     }
 
     .card:hover {
@@ -330,21 +313,6 @@
       margin-bottom: 1.25rem;
     }
 
-    .card-icon.amber {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--accent-amber);
-    }
-
-    .card-icon.green {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-green);
-    }
-
-    .card-icon.purple {
-      background: rgba(139, 92, 246, 0.15);
-      color: var(--accent-purple);
-    }
-
     .card h3 {
       font-size: 1.25rem;
       margin-bottom: 0.75rem;
@@ -358,69 +326,7 @@
       line-height: 1.65;
     }
 
-    /* Workflow Stepper */
-    .workflow-section {
-      max-width: 1200px;
-      margin: 5rem auto;
-      padding: 0 2rem;
-    }
-
-    .workflow-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 1.5rem;
-      padding: 3rem 2rem;
-      text-align: center;
-      backdrop-filter: blur(12px);
-    }
-
-    .stepper-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-
-    .stepper-step {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      padding: 1.5rem 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .stepper-step:hover {
-      border-color: var(--primary-cyan);
-      transform: translateY(-3px);
-    }
-
-    .step-num {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin: 0 auto 0.85rem;
-    }
-
-    .step-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 0.35rem;
-    }
-
-    .step-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Tech Stack Section */
+    /* Technology Stack Section */
     .tech-section {
       max-width: 1200px;
       margin: 5rem auto;
@@ -464,7 +370,7 @@
     }
 
     .tech-tag i {
-      color: var(--accent-green);
+      color: var(--accent);
     }
 
     /* Footer */
@@ -488,18 +394,16 @@
       text-decoration: underline;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .hero h1 { font-size: 2.35rem; }
       .hero-subtitle { font-size: 1rem; }
       .nav-links { display: none; }
-      .stepper-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Glow Background Effect -->
+  <!-- Background Ambient Glow -->
   <div class="glow-bg"></div>
 
   <!-- Navigation Bar -->
@@ -511,7 +415,6 @@
       <ul class="nav-links">
         <li><a href="#overview">Overview</a></li>
         <li><a href="#features">Features</a></li>
-        <li><a href="#workflow">Workflow</a></li>
         <li><a href="#techstack">Tech Stack</a></li>
       </ul>
       <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank" class="btn-github">
@@ -522,13 +425,17 @@
 
   <!-- Hero Section -->
   <section class="hero" id="overview">
-    <div class="badge">
-      <i class="fa-solid fa-shield-halved"></i> Community Mutual Aid &amp; Welfare ERP System
+    <!-- Pulsing Live Launching Soon Badge -->
+    <div class="badge-launch">
+      <div class="pulse-dot"></div> System Under Active Development • Launching Soon
     </div>
-    <h1>EkamuthuERP - Death Donation &amp; Mutual Aid Society Management System</h1>
+
+    <h1>EkamuthuERP - Community Mutual Aid System</h1>
+
     <p class="hero-subtitle">
-      A comprehensive cloud-based ERP solution engineered to streamline membership management, monthly dues collection, automated late fines, bank deposit slip verification, and death benefit claim workflows for community welfare societies.
+      A comprehensive cloud-based ERP solution designed to digitize membership records, monthly contributions, automated late fine calculations, bank slip verification, and death benefit claim management for community mutual aid societies.
     </p>
+
     <div class="hero-btns">
       <a href="#features" class="btn-primary">
         <i class="fa-solid fa-list-check"></i> Explore Features
@@ -539,114 +446,54 @@
     </div>
   </section>
 
-  <!-- Key Metrics / Stats Section -->
-  <section class="stats-container">
-    <div class="stat-card">
-      <div class="stat-icon"><i class="fa-solid fa-users-gear"></i></div>
-      <div class="stat-number">RBAC Engine</div>
-      <div class="stat-label">Admin, Treasurer &amp; Member Roles</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="color: var(--accent-amber);"><i class="fa-solid fa-calculator"></i></div>
-      <div class="stat-number">Auto Fines</div>
-      <div class="stat-label">Smart Monthly Fee Rules</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="color: var(--accent-green);"><i class="fa-solid fa-file-circle-check"></i></div>
-      <div class="stat-number">Slip Verify</div>
-      <div class="stat-label">Instant Slip Approval Flow</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="color: var(--accent-purple);"><i class="fa-solid fa-file-pdf"></i></div>
-      <div class="stat-number">PDF Receipts</div>
-      <div class="stat-label">Automated Statement Export</div>
-    </div>
-  </section>
-
-  <!-- Core Features Section -->
+  <!-- Main Features Section -->
   <section id="features">
     <div class="section-title">
       <h2>Core System Modules</h2>
-      <p>Powerful digital tools engineered for transparent society administration and seamless member participation</p>
+      <p>Powerful administrative tools engineered for smooth community society management</p>
     </div>
 
     <div class="features-grid">
       <!-- Feature 1 -->
       <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
-        <h3>Member &amp; Dependent Directory</h3>
-        <p>Comprehensive record keeping for member NICs, contact information, family dependent profiles, and granular Role-Based Access Control (Admin, Treasurer, Member).</p>
+        <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+        <h3>Members Directory &amp; Role System</h3>
+        <p>Maintain member NIC numbers, contact details, dependents list, and manage role-based access controls for Admins, Treasurers, and Members.</p>
       </div>
 
       <!-- Feature 2 -->
       <div class="card">
-        <div class="card-icon amber"><i class="fa-solid fa-calculator"></i></div>
-        <h3>Automated Late Fine Engine</h3>
-        <p>Automated calculation and tagging of overdue fines (e.g., LKR 100/month) for payments made past the due date, seamlessly integrated into monthly account statements.</p>
+        <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
+        <h3>Automated Late Fine Calculation</h3>
+        <p>Automatically calculates and appends late penalty fees (e.g. LKR 100/month) to monthly dues when payments exceed scheduled deadlines.</p>
       </div>
 
       <!-- Feature 3 -->
       <div class="card">
-        <div class="card-icon green"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <div class="card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
         <h3>Bank Slip Upload &amp; Verification</h3>
-        <p>Members can upload digital deposit slips directly, enabling Admins and Treasurers to inspect, verify, approve, or reject payments in real time with audit trails.</p>
+        <p>Members can upload payment receipts directly, allowing Treasurers and Admins to review, approve, or reject submissions seamlessly.</p>
       </div>
 
       <!-- Feature 4 -->
       <div class="card">
-        <div class="card-icon purple"><i class="fa-solid fa-chart-line"></i></div>
-        <h3>Real-Time Financial Dashboard</h3>
-        <p>Interactive income growth visualizer, monthly payment progress monitors, and overall society treasury analytics powered by responsive Recharts charts.</p>
+        <div class="card-icon"><i class="fa-solid fa-chart-pie"></i></div>
+        <h3>Real-Time Analytics Dashboard</h3>
+        <p>Monitor society revenue trends, monthly collection progress, and financial statistics through interactive Recharts data visualizations.</p>
       </div>
 
       <!-- Feature 5 -->
       <div class="card">
-        <div class="card-icon amber"><i class="fa-solid fa-hand-holding-medical"></i></div>
-        <h3>Death Benefit Claim Workflow</h3>
-        <p>Streamlined claims submission for bereaved families, tracking benefits through a structured approval pipeline: <strong>Pending ➔ Approved ➔ Disbursed</strong>.</p>
+        <div class="card-icon"><i class="fa-solid fa-hand-holding-medical"></i></div>
+        <h3>Death Benefit Claims Management</h3>
+        <p>Submit death benefit claims online and track payouts through a structured workflow: <strong>Pending ➔ Approved ➔ Disbursed</strong>.</p>
       </div>
 
       <!-- Feature 6 -->
       <div class="card">
-        <div class="card-icon green"><i class="fa-solid fa-file-pdf"></i></div>
-        <h3>PDF Receipts &amp; Audit Reports</h3>
-        <p>Instant auto-generation of downloadable PDF payment receipts and comprehensive society-wide financial summary reports for monthly meetings.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Workflow Section -->
-  <section class="workflow-section" id="workflow">
-    <div class="workflow-box">
-      <h2>Society Dues &amp; Claim Process Workflow</h2>
-      <p style="color: var(--text-muted); margin-top: 0.5rem;">5 simple steps from member registration to claim disbursement</p>
-      
-      <div class="stepper-grid">
-        <div class="stepper-step">
-          <div class="step-num">1</div>
-          <div class="step-title">Register Member</div>
-          <div class="step-desc">Create profile with NIC, contact numbers, and registered dependents</div>
-        </div>
-        <div class="stepper-step">
-          <div class="step-num">2</div>
-          <div class="step-title">Upload Slip</div>
-          <div class="step-desc">Member submits monthly fee receipt or bank deposit slip online</div>
-        </div>
-        <div class="stepper-step">
-          <div class="step-num">3</div>
-          <div class="step-title">Treasurer Audit</div>
-          <div class="step-desc">Treasurer reviews slip details and verifies incoming funds</div>
-        </div>
-        <div class="stepper-step">
-          <div class="step-num">4</div>
-          <div class="step-title">Auto PDF Receipt</div>
-          <div class="step-desc">System updates payment status and issues an official PDF receipt</div>
-        </div>
-        <div class="stepper-step">
-          <div class="step-num">5</div>
-          <div class="step-title">Claim Processing</div>
-          <div class="step-desc">Submit benefit claim upon bereavement for fast approval and payout</div>
-        </div>
+        <div class="card-icon"><i class="fa-solid fa-file-pdf"></i></div>
+        <h3>PDF Receipts &amp; Financial Reports</h3>
+        <p>Generate instant printable PDF payment receipts for members alongside comprehensive financial summary reports for audit meetings.</p>
       </div>
     </div>
   </section>
@@ -662,7 +509,6 @@
         <div class="tech-tag"><i class="fa-solid fa-database"></i> MongoDB Atlas</div>
         <div class="tech-tag"><i class="fa-solid fa-palette"></i> Tailwind CSS v4</div>
         <div class="tech-tag"><i class="fa-solid fa-key"></i> JWT &amp; Bcrypt Auth</div>
-        <div class="tech-tag"><i class="fa-solid fa-chart-pie"></i> Recharts Engine</div>
         <div class="tech-tag"><i class="fa-solid fa-file-pdf"></i> jsPDF &amp; AutoTable</div>
       </div>
     </div>
