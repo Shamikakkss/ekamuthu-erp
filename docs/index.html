@@ -1,524 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EkamuthuERP - Community Mutual Aid & Death Donation Society Management System</title>
-  <meta name="description" content="Cloud-Based Community Mutual Aid & Death Donation Society Management System designed to streamline member management, monthly contributions, and benefit claims.">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EkamuthuERP - Cloud-Based Community Mutual Aid & Death Donation ERP</title>
+  <meta name="description"
+    content="Streamlined Cloud ERP for Community Mutual Aid & Death Donation Societies." />
+
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
   <!-- FontAwesome Icons CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --bg-card: rgba(30, 41, 59, 0.7);
-      --bg-card-hover: rgba(51, 65, 85, 0.85);
-      --border-color: rgba(255, 255, 255, 0.1);
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
+      --bg-dark: #0b0f19;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #6366f1;
       --primary-cyan: #38bdf8;
-      --accent: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-purple: #8b5cf6;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-main);
-      line-height: 1.6;
-      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
     }
 
-    /* Ambient Background Glow */
+    /* Background Glow */
     .glow-bg {
       position: fixed;
       top: -10%;
       left: 50%;
       transform: translateX(-50%);
-      width: 1000px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.06) 50%, transparent 70%);
+      width: 1100px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
       z-index: -1;
       pointer-events: none;
     }
 
-    /* Header Navbar */
-    header {
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      background: rgba(15, 23, 42, 0.85);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #fff;
-      text-decoration: none;
-      letter-spacing: -0.02em;
-    }
-
-    .logo i {
-      color: var(--primary-cyan);
-      background: rgba(56, 189, 248, 0.15);
-      padding: 0.5rem;
-      border-radius: 10px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.75rem;
-      align-items: center;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: color 0.2s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--primary-cyan);
-    }
-
-    .btn-github {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 0.55rem 1.35rem;
-      border-radius: 9999px;
-      text-decoration: none;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
-
-    .btn-github:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Hero Section */
-    .hero {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 5rem 2rem 3rem;
-      text-align: center;
-    }
-
-    /* Pulsing "Launching Soon" Live Badge */
-    .badge-launch {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
-      padding: 0.5rem 1.25rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      margin-bottom: 1.75rem;
-      letter-spacing: 0.03em;
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
-    }
-
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background-color: var(--accent-amber);
-      border-radius: 50%;
-      box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-      animation: pulse 1.6s infinite;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-      }
-      70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
-      }
-      100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-      }
-    }
-
-    .hero h1 {
-      font-size: 3.25rem;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.025em;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 850px;
-      margin: 0 auto 2.5rem;
-      font-weight: 400;
-      line-height: 1.7;
-    }
-
-    .hero-btns {
-      display: flex;
-      justify-content: center;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
-      color: #fff;
-      padding: 0.85rem 2.25rem;
-      border-radius: 0.75rem;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.6);
-    }
-
-    .btn-secondary {
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 0.85rem 2.25rem;
-      border-radius: 0.75rem;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: all 0.3s ease;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(51, 65, 85, 0.85);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
-
-    /* Core Features Grid */
-    .section-title {
-      text-align: center;
-      margin: 4.5rem 0 3rem;
-    }
-
-    .section-title h2 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .section-title p {
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-      font-size: 1.05rem;
-    }
-
-    .features-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 1.75rem;
-    }
-
-    .card {
+    .glass-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 1.25rem;
-      padding: 2rem;
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
       transition: all 0.3s ease;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(59, 130, 246, 0.4);
-      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .card-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 0.85rem;
-      background: rgba(59, 130, 246, 0.15);
-      color: var(--primary-cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .card h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .card p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.65;
-    }
-
-    /* Technology Stack Section */
-    .tech-section {
-      max-width: 1200px;
-      margin: 5rem auto;
-      padding: 0 2rem;
-    }
-
-    .tech-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 1.5rem;
-      padding: 3rem 2rem;
-      text-align: center;
-      backdrop-filter: blur(12px);
-    }
-
-    .tech-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .tech-tag {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--border-color);
-      padding: 0.65rem 1.35rem;
-      border-radius: 0.75rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      color: #e2e8f0;
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
-    }
-
-    .tech-tag:hover {
-      border-color: var(--primary-cyan);
-      transform: translateY(-2px);
-    }
-
-    .tech-tag i {
-      color: var(--accent);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border-color);
-      padding: 3rem 2rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 5rem;
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    footer a {
-      color: var(--primary-cyan);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2.35rem; }
-      .hero-subtitle { font-size: 1rem; }
-      .nav-links { display: none; }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-4px);
     }
   </style>
 </head>
-<body>
 
-  <!-- Background Ambient Glow -->
+<body class="font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <!-- Background Glow -->
   <div class="glow-bg"></div>
 
-  <!-- Navigation Bar -->
-  <header>
-    <div class="nav-container">
-      <a href="#" class="logo">
-        <i class="fa-solid fa-hand-holding-heart"></i> EkamuthuERP
+  <header class="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold">
+          <i class="fa-solid fa-hands-holding-child text-lg"></i>
+        </div>
+        <div>
+          <span class="text-base font-bold text-white tracking-tight">Ekamuthu<span class="text-indigo-400">ERP</span></span>
+          <span class="block text-[10px] text-gray-400 -mt-1">Mutual Aid ERP</span>
+        </div>
       </a>
-      <ul class="nav-links">
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#techstack">Tech Stack</a></li>
-      </ul>
-      <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank" class="btn-github">
-        <i class="fa-brands fa-github"></i> View Source Code
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-gray-300">
+        <a href="#overview" class="hover:text-indigo-400 transition">Overview</a>
+        <a href="#features" class="hover:text-indigo-400 transition">Core Modules</a>
+        <a href="#workflow" class="hover:text-indigo-400 transition">Workflow</a>
+        <a href="#tech" class="hover:text-indigo-400 transition">Tech Stack</a>
+      </nav>
+
+      <!-- GitHub Link -->
+      <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank"
+        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 transition flex items-center gap-2">
+        <i class="fa-brands fa-github text-sm"></i>
+        <span class="hidden sm:inline">GitHub Repository</span>
       </a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero" id="overview">
-    <!-- Pulsing Live Launching Soon Badge -->
-    <div class="badge-launch">
-      <div class="pulse-dot"></div> System Under Active Development • Launching Soon
+  <section id="overview" class="relative z-10 pt-16 pb-12 px-4 max-w-5xl mx-auto text-center sm:px-6">
+    <!-- Active Status Badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold mb-6">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+      </span>
+      <span>System Under Active Development • Launching Soon</span>
     </div>
 
-    <h1>EkamuthuERP - Community Mutual Aid System</h1>
+    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+      Community Mutual Aid & Death Donation<br />
+      <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-sky-300 to-emerald-400">
+        Enterprise Resource Planning (ERP)
+      </span>
+    </h1>
 
-    <p class="hero-subtitle">
-      A comprehensive cloud-based ERP solution designed to digitize membership records, monthly contributions, automated late fine calculations, bank slip verification, and death benefit claim management for community mutual aid societies.
+    <p class="mt-4 text-sm sm:text-base text-gray-300 max-w-2xl mx-auto leading-relaxed">
+      A streamlined cloud platform engineered for managing member subscriptions, calculating late fines automatically, verifying bank slip payments, processing death benefit claims, and generating official PDF receipts.
     </p>
 
-    <div class="hero-btns">
-      <a href="#features" class="btn-primary">
-        <i class="fa-solid fa-list-check"></i> Explore Features
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="#features"
+        class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-lg shadow-indigo-600/20 transition flex items-center gap-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Explore Core Modules</span>
       </a>
-      <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank" class="btn-secondary">
-        <i class="fa-brands fa-github"></i> GitHub Repository
+      <a href="https://github.com/Shamikakkss/ekamuthu-erp" target="_blank"
+        class="px-6 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 font-semibold text-xs transition flex items-center gap-2">
+        <i class="fa-brands fa-github text-indigo-400"></i>
+        <span>View Source Code</span>
       </a>
     </div>
   </section>
 
-  <!-- Main Features Section -->
-  <section id="features">
-    <div class="section-title">
-      <h2>Core System Modules</h2>
-      <p>Powerful administrative tools engineered for smooth community society management</p>
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 my-6">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="glass-card p-4 rounded-xl text-center">
+        <div class="text-indigo-400 text-xl mb-1"><i class="fa-solid fa-user-shield"></i></div>
+        <div class="text-lg font-bold text-white">Role Access</div>
+        <div class="text-[11px] text-gray-400">Admin, Treasurer, Member</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center">
+        <div class="text-emerald-400 text-xl mb-1"><i class="fa-solid fa-calculator"></i></div>
+        <div class="text-lg font-bold text-white">Fine Engine</div>
+        <div class="text-[11px] text-gray-400">Rs. 100/mo Auto Fine</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center">
+        <div class="text-amber-400 text-xl mb-1"><i class="fa-solid fa-receipt"></i></div>
+        <div class="text-lg font-bold text-white">Bank Slips</div>
+        <div class="text-[11px] text-gray-400">1-Click Verification</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center">
+        <div class="text-purple-400 text-xl mb-1"><i class="fa-solid fa-file-pdf"></i></div>
+        <div class="text-lg font-bold text-white">PDF Receipts</div>
+        <div class="text-[11px] text-gray-400">Automated Billing</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="py-12 px-4 max-w-5xl mx-auto sm:px-6">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Core System Modules</h2>
+      <p class="text-xs sm:text-sm text-gray-400 mt-2">
+        Designed for Treasurers, Admins, and Community Members
+      </p>
     </div>
 
-    <div class="features-grid">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
       <!-- Feature 1 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-users"></i></div>
-        <h3>Members Directory &amp; Role System</h3>
-        <p>Maintain member NIC numbers, contact details, dependents list, and manage role-based access controls for Admins, Treasurers, and Members.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-lg mb-4">
+          <i class="fa-solid fa-users-gear"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Member & Role Management</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Comprehensive registration tracking NIC details, phone numbers, and dependents with secure JWT multi-role permissions.
+        </p>
       </div>
 
       <!-- Feature 2 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
-        <h3>Automated Late Fine Calculation</h3>
-        <p>Automatically calculates and appends late penalty fees (e.g. LKR 100/month) to monthly dues when payments exceed scheduled deadlines.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-lg mb-4">
+          <i class="fa-solid fa-calculator"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Automated Late Fine Engine</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Automatically computes Rs. 100/- overdue fines per unpaid month with multi-month bulk subscription payment options.
+        </p>
       </div>
 
       <!-- Feature 3 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-        <h3>Bank Slip Upload &amp; Verification</h3>
-        <p>Members can upload payment receipts directly, allowing Treasurers and Admins to review, approve, or reject submissions seamlessly.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg mb-4">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Bank Slip Verification Portal</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Self-service portal where members upload bank deposit receipts for instant Treasurer inspection and 1-click approvals.
+        </p>
       </div>
 
       <!-- Feature 4 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-chart-pie"></i></div>
-        <h3>Real-Time Analytics Dashboard</h3>
-        <p>Monitor society revenue trends, monthly collection progress, and financial statistics through interactive Recharts data visualizations.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-lg mb-4">
+          <i class="fa-solid fa-hand-holding-medical"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Death Benefit Claim Workflow</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Transparent claim submission and processing pipeline (Pending ➔ Approved ➔ Paid) for members and registered dependents.
+        </p>
       </div>
 
       <!-- Feature 5 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-hand-holding-medical"></i></div>
-        <h3>Death Benefit Claims Management</h3>
-        <p>Submit death benefit claims online and track payouts through a structured workflow: <strong>Pending ➔ Approved ➔ Disbursed</strong>.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-lg mb-4">
+          <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">PDF Receipt & Ledger Engine</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Generates official downloadable PDF receipts with transaction reference IDs alongside exportable society financial summaries.
+        </p>
       </div>
 
       <!-- Feature 6 -->
-      <div class="card">
-        <div class="card-icon"><i class="fa-solid fa-file-pdf"></i></div>
-        <h3>PDF Receipts &amp; Financial Reports</h3>
-        <p>Generate instant printable PDF payment receipts for members alongside comprehensive financial summary reports for audit meetings.</p>
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="w-11 h-11 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 text-lg mb-4">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Financial Analytics</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Aggregated real-time metrics tracking monthly subscription totals, outstanding dues, fine collections, and approved claims.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Technology Stack Section -->
-  <section class="tech-section" id="techstack">
-    <div class="tech-box">
-      <h2>Technology Stack &amp; Architecture</h2>
-      <p style="color: var(--text-muted); margin-top: 0.5rem;">Built using modern full-stack web technologies</p>
-      <div class="tech-tags">
-        <div class="tech-tag"><i class="fa-brands fa-react"></i> React 19 (Vite)</div>
-        <div class="tech-tag"><i class="fa-brands fa-node-js"></i> Node.js (Express 5)</div>
-        <div class="tech-tag"><i class="fa-solid fa-database"></i> MongoDB Atlas</div>
-        <div class="tech-tag"><i class="fa-solid fa-palette"></i> Tailwind CSS v4</div>
-        <div class="tech-tag"><i class="fa-solid fa-key"></i> JWT &amp; Bcrypt Auth</div>
-        <div class="tech-tag"><i class="fa-solid fa-file-pdf"></i> jsPDF &amp; AutoTable</div>
+  <section id="workflow" class="py-12 px-4 max-w-5xl mx-auto sm:px-6">
+    <div class="glass-card p-8 rounded-2xl border border-gray-800 text-center">
+      <h2 class="text-2xl font-bold text-white tracking-tight">System Operational Workflow</h2>
+      <p class="text-xs text-gray-400 mt-2">5-step streamlined lifecycle for society members and treasurers</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 mt-8">
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">1</div>
+          <div class="text-xs font-bold text-white mb-1">Registration</div>
+          <div class="text-[11px] text-gray-400">Member profile & dependent setup</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">2</div>
+          <div class="text-xs font-bold text-white mb-1">Fine Calculation</div>
+          <div class="text-[11px] text-gray-400">Auto calculation of unpaid months</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">3</div>
+          <div class="text-xs font-bold text-white mb-1">Slip Upload</div>
+          <div class="text-[11px] text-gray-400">Member submits bank deposit slip</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">4</div>
+          <div class="text-xs font-bold text-white mb-1">Treasurer Audit</div>
+          <div class="text-[11px] text-gray-400">1-click slip verification</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">5</div>
+          <div class="text-xs font-bold text-white mb-1">PDF Receipt</div>
+          <div class="text-[11px] text-gray-400">Instant PDF download & ledger sync</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>EkamuthuERP System • Developed for Community Mutual Aid &amp; Death Donation Societies</p>
-    <p style="margin-top: 0.5rem;">Created by <a href="https://github.com/Shamikakkss" target="_blank">Shamikakkss</a></p>
+  <section id="tech" class="py-12 px-4 max-w-5xl mx-auto sm:px-6">
+    <div class="glass-card p-8 rounded-2xl border border-gray-800 text-center">
+      <h2 class="text-2xl font-bold text-white tracking-tight">Technology Stack & Architecture</h2>
+      <p class="text-xs text-gray-400 mt-2 mb-8">Full-stack technologies powering EkamuthuERP</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-brands fa-react text-sky-400 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">React 19</div>
+          <div class="text-[10px] text-gray-500">Frontend UI Framework</div>
+        </div>
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-solid fa-palette text-indigo-400 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">Tailwind CSS</div>
+          <div class="text-[10px] text-gray-500">Styling System</div>
+        </div>
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-brands fa-node-js text-emerald-400 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">Node / Express</div>
+          <div class="text-[10px] text-gray-500">RESTful API Backend</div>
+        </div>
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-solid fa-database text-emerald-500 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">MongoDB Atlas</div>
+          <div class="text-[10px] text-gray-500">Cloud NoSQL Database</div>
+        </div>
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-solid fa-key text-amber-400 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">JWT & Bcrypt</div>
+          <div class="text-[10px] text-gray-500">Secure Authentication</div>
+        </div>
+        <div class="bg-slate-900/90 border border-gray-800 p-4 rounded-xl text-center hover:border-indigo-500/40 transition">
+          <i class="fa-solid fa-file-pdf text-purple-400 text-2xl mb-2"></i>
+          <div class="text-xs font-bold text-gray-200">jsPDF Generator</div>
+          <div class="text-[10px] text-gray-500">Automated PDF Engine</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="mt-auto border-t border-gray-800 bg-slate-950 py-8 px-4 text-center text-xs text-gray-400">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>
+        <strong class="text-white">EkamuthuERP System</strong> — Community Mutual Aid & Death Donation ERP
+      </div>
+      <div>
+        Developed by <a href="https://github.com/Shamikakkss" target="_blank" class="text-indigo-400 hover:underline font-medium">Shamikakkss</a>
+      </div>
+    </div>
   </footer>
 
 </body>
+
 </html>
